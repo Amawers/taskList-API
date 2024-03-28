@@ -1,17 +1,20 @@
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
+const models = require('../models/index')
 
-// const checkCurrentUser = async (req, res) => {
-//     const token = req.body.token;
-//     if(token){
-//         jwt.verify(token, 'temporary secret key', async (err, decodedToken) => {
-//             if(err){
-//                 res.send(err);
-//                 next();
-//             }else{
-//                 res.send(decodedToken);
-//             }
-//         });
-//     }else{
-//         res.send('No token');
-//     }
-// }
+const authenticateUser = async (req, res, next) => {
+  const header = req.headers['authorization']
+  const token = header.split(' ')[1]
+
+  try {
+    const decoded = jwt.verify(token, 'temporary secret key');
+    const user = await models.User.findAll({
+      where: {
+        id: decoded.id,
+      }
+    })
+    if (user) next();
+  } catch (error) {
+    res.send(error);
+  }
+}
+module.exports = { authenticateUser }

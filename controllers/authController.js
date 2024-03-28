@@ -72,8 +72,24 @@ const update = async (req, res) => {
     res.send(error)
   }
 }
-const logOut = (req, res) => {}
-const deleteUser = (req, res) => {}
+
+const deleteUser = async (req, res) => {
+  try {
+    const id = getCurrentUserId(req, res)
+    await models.User.destroy({
+      where: {
+        id
+      }
+    });
+    res.send("sakses");
+  } catch (error) {
+    res.send(error);
+  }
+}
+
+const logOut = (req, res) => {
+  // implement refresh tokens
+}
 
 module.exports = {
   register,
